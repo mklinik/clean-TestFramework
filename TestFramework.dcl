@@ -16,11 +16,3 @@ assert :: Bool -> TestResult
 
 // Evaluate tests and print results to stdout
 runTests :: [Testcase] *World -> *World
-
-// How to use:
-//
-// Start = runTests
-//     [ Testcase "toColor o fromColor" $ assert $
-//         and [ c == toColor (fromColor c) \\ c <- [Red, Yellow, Blue]]
-//     , Testcase "show for Color Red" $ StringList (show Red) shouldBeL ["Red"]
-//     ]
