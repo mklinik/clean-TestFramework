@@ -6,6 +6,13 @@ import StdMisc
 
 derive class iTask TestResult
 
+assertValue_ :: Bool a -> TestResult | gText{|*|} a
+assertValue_ True _ = Passed
+assertValue_ False v = Failed ("assertion failed on value " +++ toSingleLineText v)
+
+assertValueL_ :: Bool [a] -> TestResult | gText{|*|} a
+assertValueL_ False v = Failed ("assertion failed on value " +++ listToString toSingleLineText v)
+
 runTaskTests :: [TaskTestcase] *World -> *World
 runTaskTests tests world = startEngine (runAllTests tests >>| shutDown) world
 

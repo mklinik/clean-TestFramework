@@ -27,7 +27,15 @@ shouldBeImpl x y print
 
 assert :: Bool -> TestResult
 assert True  = Passed
-assert False = Failed "failed"
+assert False = Failed "assertion failed"
+
+assertValue :: Bool a -> TestResult | toString a
+assertValue True _ = Passed
+assertValue False v = Failed ("assertion failed on value " +++ toString v)
+
+assertValueL :: Bool [a] -> TestResult | toString a
+assertValueL True _ = Passed
+assertValueL False v = Failed ("assertion failed on value " +++ listToString toString v)
 
 runTests :: [Testcase] *World -> *World
 runTests tests world

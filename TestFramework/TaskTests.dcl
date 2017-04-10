@@ -12,3 +12,6 @@ import iTasks
 derive class iTask TestResult
 
 runTaskTests :: [TaskTestcase] *World -> *World
+
+assertValue_ :: Bool a -> TestResult | gText{|*|} a
+assertValueL_ :: Bool [a] -> TestResult | gText{|*|} a
