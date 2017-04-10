@@ -11,6 +11,7 @@ assertValue_ True _ = Passed
 assertValue_ False v = Failed ("assertion failed on value " +++ toSingleLineText v)
 
 assertValueL_ :: Bool [a] -> TestResult | gText{|*|} a
+assertValueL_ True _ = Passed
 assertValueL_ False v = Failed ("assertion failed on value " +++ listToString toSingleLineText v)
 
 runTaskTests :: [TaskTestcase] *World -> *World
