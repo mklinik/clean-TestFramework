@@ -71,8 +71,6 @@ listToString f xs = listToString` f xs (\x = "[" +++ x)
     listToString` f [s:[]] c = c (listToString` f [] (\x = f s +++ x))
     listToString` f [s:ss] c = c (listToString` f ss (\x = f s +++ "," +++ x))
 
-:: TestableList a = TestableList [a]
-
 instance toString (TestableList a) | toString a
   where toString (TestableList l) = listToString toString l
 

@@ -13,5 +13,8 @@ derive class iTask TestResult
 
 runTaskTests :: [TaskTestcase] *World -> *World
 
-assertValue_ :: Bool a -> TestResult | gText{|*|} a
-assertValueL_ :: Bool [a] -> TestResult | gText{|*|} a
+// assertions for gText values
+assertValueT :: Bool a -> TestResult | gText{|*|} a
+assertValueLT :: Bool [a] -> TestResult | gText{|*|} a
+(shouldBeLT) :: [a] [a] -> TestResult | == a & gText{|*|} a
+derive gText TestableList

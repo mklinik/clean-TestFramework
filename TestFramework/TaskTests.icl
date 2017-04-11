@@ -5,14 +5,18 @@ import TestFramework
 import StdMisc
 
 derive class iTask TestResult
+derive gText TestableList
 
-assertValue_ :: Bool a -> TestResult | gText{|*|} a
-assertValue_ True _ = Passed
-assertValue_ False v = Failed ("assertion failed on value " +++ toSingleLineText v)
+assertValueT :: Bool a -> TestResult | gText{|*|} a
+assertValueT True _ = Passed
+assertValueT False v = Failed ("assertion failed on value " +++ toSingleLineText v)
 
-assertValueL_ :: Bool [a] -> TestResult | gText{|*|} a
-assertValueL_ True _ = Passed
-assertValueL_ False v = Failed ("assertion failed on value " +++ listToString toSingleLineText v)
+assertValueLT :: Bool [a] -> TestResult | gText{|*|} a
+assertValueLT True _ = Passed
+assertValueLT False v = Failed ("assertion failed on value " +++ listToString toSingleLineText v)
+
+(shouldBeLT) :: [a] [a] -> TestResult | == a & gText{|*|} a
+(shouldBeLT) x y = shouldBeImpl (TestableList x) (TestableList y) toSingleLineText
 
 runTaskTests :: [TaskTestcase] *World -> *World
 // A little bit of waiting is needed to synchronize client and server,

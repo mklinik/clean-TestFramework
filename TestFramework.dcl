@@ -22,4 +22,8 @@ runTests :: [Testcase] *World -> *World
 
 
 // for internal use only
+:: TestableList a = TestableList [a]
+instance toString (TestableList a) | toString a
+instance == (TestableList a) | == a
 listToString :: (a -> String) [a] -> String
+shouldBeImpl :: a a (a -> String) -> TestResult | == a
