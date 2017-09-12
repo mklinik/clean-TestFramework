@@ -41,6 +41,7 @@ Global
 		ExportedNames:	
 	Paths
 		Path:	{Project}
+		Path:	{Project}/lib
 	Precompile:	
 	Postlink:	
 MainModule
@@ -60,7 +61,7 @@ MainModule
 OtherModules
 	Module
 		Name:	TestFramework
-		Dir:	{Project}
+		Dir:	{Project}/lib
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
