@@ -20,6 +20,9 @@ assertValueL :: Bool [a] -> TestResult | toString a
 // Evaluate tests and print results to stdout
 runTests :: [Testcase] *World -> *World
 
+// Keep only testcases whose description starts with the given string
+only :: String [Testcase] -> [Testcase]
+
 
 // for internal use only
 :: TestableList a = TestableList [a]

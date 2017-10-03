@@ -76,3 +76,15 @@ instance toString (TestableList a) | toString a
 
 instance == (TestableList a) | == a
   where (==) (TestableList l) (TestableList r) = l == r
+
+only :: String [Testcase] -> [Testcase]
+only prefix tests = filter hasPrefix tests
+  where
+    hasPrefix (Testcase   description _) = startsWith prefix description
+    hasPrefix (IOTestcase description _) = startsWith prefix description
+
+// Stolen from Data.Text to not depend on clean platform
+startsWith :: !String !String -> Bool
+startsWith needle haystack
+  #! s_needle = size needle
+  = s_needle <= size haystack && needle == haystack%(0,s_needle-1)
