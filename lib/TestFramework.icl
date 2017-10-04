@@ -1,7 +1,31 @@
 implementation module TestFramework
 
 import StdEnv
+import StdMisc
 import GenPrint
+
+import System.IO
+import Data.Maybe
+import Control.Monad
+import Control.Applicative
+import Data.Func
+
+:: Testcase =
+  { description :: String
+  , runTestcase :: *World -> *(TestResult, *World)
+  }
+
+testcase :: String TestResult -> Testcase
+testcase desc result =
+  { description = desc
+  , runTestcase = \world -> (result, world)
+  }
+
+ioTestcase :: String (IO TestResult) -> Testcase
+ioTestcase desc ioRes =
+  { description = desc
+  , runTestcase = \world -> evalIO ioRes world
+  }
 
 (shouldBe) :: a a -> TestResult
   | == a
@@ -17,13 +41,13 @@ import GenPrint
 shouldBeImpl :: a a (a -> String) -> TestResult | == a
 shouldBeImpl x y print
   | x == y    = Passed
-  | otherwise = Failed ("\n expected: '" +++ print y +++
-                       "'\n  but got: '" +++ print x +++ "'")
+  | otherwise = Failed (  "expected: '" +++ print y +++
+                       "'\n but got: '" +++ print x +++ "'")
 
 (shouldSatisfy) :: a (a -> Bool) -> TestResult | toString a
 (shouldSatisfy) x p
   | p x       = Passed
-  | otherwise = Failed ("\n " +++ toString x +++ " doesn't satisfy the condition.")
+  | otherwise = Failed (" " +++ toString x +++ " doesn't satisfy the condition.")
 
 assert :: Bool -> TestResult
 assert True  = Passed
@@ -38,30 +62,24 @@ assertValueL True _ = Passed
 assertValueL False v = Failed ("assertion failed on value " +++ listToString toString v)
 
 runTests :: [Testcase] *World -> *World
-runTests tests world
-  # (output, world) = runTests` tests "" world
-  # (console, world) = stdio world
-  # console = fwrites (if (output == "")
-      (toString (length tests) +++ " test(s) passed\n")
-      output) console
-  # (ok, world) = fclose console world
-  | not ok = abort "Cannot close console\n"
-  | otherwise = world
+runTests tests world = execIO doRun world
+  where
+    doRun =
+      runTests` tests >>= \result ->
+      case result of
+        Nothing -> putStrLn $ toString (length tests) +++ " tests passed"
+        Just (err, test) ->
+          putStrLn (test.description) >>|
+          putStrLn err
 
-runTests` :: [Testcase] String *World -> (String, *World)
-runTests` [] output world = (output, world)
-runTests` [(IOTestcase description test):rest] output world
-  # (result, world) = test world
-  = case result of
-      Passed -> runTests` rest output world
-      (Failed reason) ->
-        runTests` rest (output +++ description +++ ": " +++ reason +++ "\n") world
-runTests` [(Testcase description test):rest] output world
-  # (result, world) = (test, world)
-  = case result of
-      Passed -> runTests` rest output world
-      (Failed reason) ->
-        runTests` rest (output +++ description +++ ": " +++ reason +++ "\n") world
+// Nothing if all tests pass, Just for the first failed test
+runTests` :: [Testcase] -> IO (Maybe (String, Testcase))
+runTests` [] = pure (Nothing)
+runTests` [test:tests] =
+  withWorld (test.runTestcase) >>= \result ->
+  case result of
+    Failed err -> pure (Just (err, test))
+    Passed     -> runTests` tests
 
 listToString :: (a -> String) [a] -> String
 listToString f xs = listToString` f xs (\x = "[" +++ x)
@@ -80,8 +98,7 @@ instance == (TestableList a) | == a
 only :: String [Testcase] -> [Testcase]
 only prefix tests = filter hasPrefix tests
   where
-    hasPrefix (Testcase   description _) = startsWith prefix description
-    hasPrefix (IOTestcase description _) = startsWith prefix description
+    hasPrefix test = startsWith prefix (test.description)
 
 // Stolen from Data.Text to not depend on clean platform
 startsWith :: !String !String -> Bool

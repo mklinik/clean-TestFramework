@@ -2,11 +2,13 @@ definition module TestFramework
 
 import StdOverloaded
 import GenPrint
+from System.IO import :: IO
 
 :: Testcase
-  = Testcase String TestResult
-  | IOTestcase String (*World -> *(TestResult, *World))
 :: TestResult = Passed | Failed String
+
+testcase :: String TestResult -> Testcase
+ioTestcase :: String (IO TestResult) -> Testcase
 
 (shouldBe) :: a a -> TestResult | == a & toString a
 (shouldBeL) :: [a] [a] -> TestResult | == a & toString a
