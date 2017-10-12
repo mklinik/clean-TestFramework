@@ -6,8 +6,8 @@ import System.IO
 import Control.Monad
 import Control.Applicative
 
-gastTestcase :: String [Testoption] test -> Testcase | Testable test
-gastTestcase desc opts test =
+GastTestcase :: String [Testoption] test -> Testcase | Testable test
+GastTestcase desc opts test =
   { description = desc
   , runTestcase = \world -> evalIO (doTest desc opts test) world
   }

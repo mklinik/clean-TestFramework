@@ -10,14 +10,14 @@ import Control.Monad
 import Control.Applicative
 import Data.Func
 
-testcase :: String TestResult -> Testcase
-testcase desc result =
+Testcase :: String TestResult -> Testcase
+Testcase desc result =
   { description = desc
   , runTestcase = \world -> (result, world)
   }
 
-ioTestcase :: String (IO TestResult) -> Testcase
-ioTestcase desc ioRes =
+IOTestcase :: String (IO TestResult) -> Testcase
+IOTestcase desc ioRes =
   { description = desc
   , runTestcase = \world -> evalIO ioRes world
   }
