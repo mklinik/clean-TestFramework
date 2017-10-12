@@ -10,11 +10,6 @@ import Control.Monad
 import Control.Applicative
 import Data.Func
 
-:: Testcase =
-  { description :: String
-  , runTestcase :: *World -> *(TestResult, *World)
-  }
-
 testcase :: String TestResult -> Testcase
 testcase desc result =
   { description = desc

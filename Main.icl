@@ -2,6 +2,7 @@ module Main
 
 import StdEnv
 import TestFramework
+import TestFramework.GastTests
 
 import System.IO
 import Control.Applicative
@@ -16,6 +17,11 @@ tests =
           writeFileM "test.txt" "test string"
       >>| readFileM "test.txt"
       >>= \content -> pure (content shouldBe "test string")
+
+  , gastTestcase "a simple property" [Tests 1000] propPlusCommutative
   ]
+
+propPlusCommutative :: Int Int -> Bool
+propPlusCommutative x y = x + y == y + x
 
 Start world = runTests tests world

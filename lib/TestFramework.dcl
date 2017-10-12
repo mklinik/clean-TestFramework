@@ -4,7 +4,10 @@ import StdOverloaded
 import GenPrint
 from System.IO import :: IO
 
-:: Testcase
+:: Testcase =
+  { description :: String
+  , runTestcase :: *World -> *(TestResult, *World)
+  }
 :: TestResult = Passed | Failed String
 
 testcase :: String TestResult -> Testcase
