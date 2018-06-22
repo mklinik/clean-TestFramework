@@ -1,7 +1,7 @@
 definition module TestFramework
 
 import StdOverloaded
-import GenPrint
+import Text.GenPrint
 from System.IO import :: IO
 
 Testcase :: String TestResult -> Testcase

@@ -2,7 +2,7 @@ implementation module TestFramework
 
 import StdEnv
 import StdMisc
-import GenPrint
+import Text.GenPrint
 
 import System.IO
 import Data.Maybe
