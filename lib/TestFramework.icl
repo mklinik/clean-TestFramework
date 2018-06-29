@@ -3,6 +3,7 @@ implementation module TestFramework
 import StdEnv
 import StdMisc
 import Text.GenPrint
+import Data.GenEq
 
 import System.IO
 import Data.Maybe
@@ -25,19 +26,20 @@ IOTestcase desc ioRes =
 (shouldBe) :: a a -> TestResult
   | == a
   & toString a
-(shouldBe) x y = shouldBeImpl x y toString
+(shouldBe) x y = shouldBeImpl x y toString (==)
 
-(shouldBe_) :: a a -> TestResult | == a & gPrint{|*|} a
-(shouldBe_) x y = shouldBeImpl x y printToString
+(shouldBe_) :: a a -> TestResult | gEq{|*|} a & gPrint{|*|} a
+(shouldBe_) x y = shouldBeImpl x y printToString (===)
 
 (shouldBeL) :: [a] [a] -> TestResult | == a & toString a
 (shouldBeL) x y = (TestableList x) shouldBe (TestableList y)
 
-shouldBeImpl :: a a (a -> String) -> TestResult | == a
-shouldBeImpl x y print
-  | x == y    = Passed
-  | otherwise = Failed (  "expected: '" +++ print y +++
-                       "'\n but got: '" +++ print x +++ "'")
+shouldBeImpl :: a a (a -> String) (a a -> Bool) -> TestResult
+shouldBeImpl x y print compare
+  | compare x y = Passed
+  | otherwise   = Failed
+      (  "expected: '" +++ print y +++
+         "'\n but got: '" +++ print x +++ "'")
 
 (shouldSatisfy) :: a (a -> Bool) -> TestResult | toString a
 (shouldSatisfy) x p

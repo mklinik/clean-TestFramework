@@ -1,7 +1,8 @@
 definition module TestFramework
 
 import StdOverloaded
-import Text.GenPrint
+from Text.GenPrint import generic gPrint, class PrintOutput, :: PrintState
+from Data.GenEq import generic gEq
 from System.IO import :: IO
 
 Testcase :: String TestResult -> Testcase
@@ -9,7 +10,7 @@ IOTestcase :: String (IO TestResult) -> Testcase
 
 (shouldBe) :: a a -> TestResult | == a & toString a
 (shouldBeL) :: [a] [a] -> TestResult | == a & toString a
-(shouldBe_) :: a a -> TestResult | == a & gPrint{|*|} a
+(shouldBe_) :: a a -> TestResult | gEq{|*|} a & gPrint{|*|} a
 (shouldSatisfy) :: a (a -> Bool) -> TestResult | toString a
 assert :: Bool -> TestResult
 // If the assertion is false, include a in the error message
@@ -28,7 +29,7 @@ only :: String [Testcase] -> [Testcase]
 instance toString (TestableList a) | toString a
 instance == (TestableList a) | == a
 listToString :: (a -> String) [a] -> String
-shouldBeImpl :: a a (a -> String) -> TestResult | == a
+shouldBeImpl :: a a (a -> String) (a a -> Bool) -> TestResult
 
 :: Testcase =
   { description :: String
